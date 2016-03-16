@@ -105,6 +105,8 @@
     MKCoordinateRegion regoin = MKCoordinateRegionMake(userLocation.location.coordinate, span);
     [mapView setRegion:regoin animated:YES];
     
+    //在大头针模型里可以设置点击大头针出现试图的子标题和副标题，在大头针试图上可以设置点击大头针是出现在子标题和副标题左边两边的试图
+    userLocation.title = @"123";
     
     
 }
@@ -121,16 +123,19 @@
     
     detailVC.view.backgroundColor = [UIColor whiteColor];
     
-    //获取到该大头针试图的数据模型
+    //获取到该大头针试图的数据模型, MKPointAnnotation继承于MKShape，MKShape实现了MKAnnotation协议，所以MKPointAnnotation是一个大头针模型
     MKPointAnnotation *annotation = view.annotation;
     
     detailVC.title = annotation.title;
     
-    //判断当前点击的大头针是不是显示当前用户位置的大头针，如果是就让他变色
     /*
-     * MKPinAnnotationView是MKAnnotationView的子类，相比MKAnnotationView而言，他能够设置大头针颜色和显示大头针时的动画
+     * 判断当前点击的大头针是不是显示当前用户位置的大头针，如果是就让他变色
+     
+     * 1. MKPinAnnotationView：他是系统自带的大头针，继承于MKAnnotationView，形状跟棒棒糖类似，可以设置糖的颜色，和显示的时候是否有动画效果,
     
+    * 2. MKAnnotationView：可以用指定的图片作为大头针的样式，但显示的时候没有动画效果，如果没有给图片的话会什么都不显示
      */
+    //判断当前点击的大头针是不是显示当前用户位置的大头针，如果是就让他变色
     if (![view.annotation isKindOfClass:[MKUserLocation class]]) {
         
         MKPinAnnotationView *pinView = (MKPinAnnotationView *)view;
@@ -147,10 +152,12 @@
     //查看MKUserLocation后可以发现,MKUserLocation实现了MKAnnotation协议，所以MKUserLocation也是一个大头针模型，只不过这个模型比较特殊，用来表示用户当前位置
     if ([annotation isKindOfClass:[MKUserLocation class]]) {
         
+        
         MKAnnotationView *userAnnotationView = [[MKAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:@"userAnnotation"];
         
         userAnnotationView.image = [UIImage imageNamed:@"person.png"];
         
+    
         //如果将大头针给自定义会变成不可交互，将canShowCallout设为YES便可恢复交互
         userAnnotationView.canShowCallout = YES;
         
@@ -167,7 +174,8 @@
         imgView.backgroundColor = [UIColor redColor];
         imgView.frame = CGRectMake(0, 0, 5, 200);
         
-        //leftCalloutAccessoryView的试图只有高度能够设置
+        //在大头针模型里可以设置点击大头针出现试图的子标题和副标题，在大头针试图上可以设置点击大头针是出现在子标题和副标题左边两边的试图
+        //leftCalloutAccessoryView的试图只有高度能够设置，这里设置点击大头针时要显示的试图
         userAnnotationView.leftCalloutAccessoryView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"person.png"]];
         userAnnotationView.rightCalloutAccessoryView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"person.png"]];
         
